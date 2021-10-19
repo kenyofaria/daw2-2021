@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h2>visualizando requisições assíncronas</h2>
+<div name="div1" id="div1" style="height: 40px">
+
+</div>
+<br>
+<div name="div2" id="div2" style="height: 40px">
+
+</div>
+<br>
+<div name="div3" id="div3" style="height: 40px">
+
+</div>
+</body>
+<script type="text/javascript">
+
+	setInterval(() => {
+		divs = document.querySelectorAll('div');
+		divs.forEach(d => {
+			setInterval(() => {
+				var ajax = new XMLHttpRequest();
+				ajax.open("GET", "http://"+window.location.host+"/daw2-servlets/random?div="+d.getAttribute("name"));
+				ajax.send();	
+				ajax.onreadystatechange =
+						function (){//funcao anonima
+							callBack(ajax, d)
+						}; 
+			}, 2000);
+		
+		});
+	}, 3000);
+	
+	function callBack(ajax, component){
+		console.log('status de retorno: ' + ajax.status);
+		if(ajax.readyState == 4 && ajax.status == 200){
+			var resposta = ajax.responseText;
+			const arr = resposta.split("  ");
+			component.innerHTML = arr[1];
+		}
+	}
+	
+	
+	
+</script>
+</html>
