@@ -23,15 +23,23 @@ public class AuthentitationFilter implements Filter{
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
+		
 		HttpServletRequest req = (HttpServletRequest) request;
-		HttpSession session = req.getSession();
-		String usuarioLogado = (String) session.getAttribute("usuarioLogado");
-		if(usuarioLogado != null) {
-			logger.error("realizando autenticacao");
-			chain.doFilter(request, response);
-		}else {
-			request.getRequestDispatcher("/WEB-INF/pages/login.jsp").forward(request, response);
+		String path = req.getRequestURI();
+		if (path.contains("/login")) {
+		    chain.doFilter(request, response); // Just continue chain.
+		} else {
+			HttpSession session = req.getSession();
+			String usuarioLogado = (String) session.getAttribute("usuarioLogado");
+			if(usuarioLogado != null) {
+				chain.doFilter(request, response);
+			}else {
+				//HttpServletResponse resp = (HttpServletResponse) response;
+				//resp.sendRedirect("/login");
+				request.getRequestDispatcher("/WEB-INF/pages/login.jsp").forward(request, response);
+			}
 		}
+
 	}
 	
 	
